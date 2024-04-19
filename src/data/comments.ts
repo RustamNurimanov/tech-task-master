@@ -1,4 +1,4 @@
-import { subtractHours } from 'src/lib/date'
+import { subtractHours } from '../lib/date'
 
 interface IPagination<T> {
   pagination: {
@@ -20,6 +20,7 @@ const commentsPage1: IPagination<any[]> = {
   data: [
     {
       id: 1,
+      // eslint-disable-next-line no-undef
       created: subtractHours(today, 1).toISOString(),
       text: 'The Force will be with you. Always.',
       author: 1,
