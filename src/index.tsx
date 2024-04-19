@@ -1,15 +1,21 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
-import useMockAdapter from 'src/api/useMockAdapter'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 
+import useMockAdapter from './api/useMockAdapter'
 import { App } from './App'
 
 import 'normalize.css'
 
 const root = ReactDOM.createRoot(
-  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   document.getElementById('root')!
 )
+
+export const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: { refetchOnWindowFocus: false, retry: 0, refetchOnMount: false }
+  }
+})
 
 const RootApp = () => {
   useMockAdapter()
@@ -19,6 +25,8 @@ const RootApp = () => {
 
 root.render(
   <React.StrictMode>
-    <RootApp />
+    <QueryClientProvider client={queryClient}>
+      <RootApp/>
+    </QueryClientProvider>
   </React.StrictMode>
 )
