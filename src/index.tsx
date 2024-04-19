@@ -1,21 +1,24 @@
-import React from "react";
-import ReactDOM from "react-dom/client";
-import useMockAdapter from "src/api/useMockAdapter";
+import React from 'react'
+import ReactDOM from 'react-dom/client'
+import useMockAdapter from 'src/api/useMockAdapter'
+
+import { App } from './App'
+
 import 'normalize.css'
-import {App} from "./App";
 
 const root = ReactDOM.createRoot(
-    document.getElementById("root") as HTMLElement,
-);
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  document.getElementById('root')!
+)
 
 const RootApp = () => {
-    useMockAdapter();
+  useMockAdapter()
 
-    return <App />;
-};
+  return <App />
+}
 
 root.render(
-    <React.StrictMode>
-        <RootApp />
-    </React.StrictMode>,
-);
+  <React.StrictMode>
+    <RootApp />
+  </React.StrictMode>
+)
