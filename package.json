@@ -16,13 +16,17 @@
         "@types/node": "16.11.41",
         "@types/react": "18.0.14",
         "@types/react-dom": "18.0.5",
+        "@types/react-query": "^1.2.9",
         "axios": "0.27.2",
         "axios-mock-adapter": "1.20.0",
+        "normalize.css": "^8.0.1",
         "prettier": "2.3.2",
         "react": "18.2.0",
         "react-dom": "18.2.0",
+        "react-hot-toast": "^2.4.1",
         "react-query": "^3.39.3",
         "react-scripts": "5.0.1",
+        "styled-components": "^6.1.8",
         "typescript": "4.7.4"
     },
     "eslintConfig": {
@@ -42,5 +46,8 @@
             "last 1 firefox version",
             "last 1 safari version"
         ]
+    },
+    "devDependencies": {
+        "@types/styled-components": "^5.1.34"
     }
 }
