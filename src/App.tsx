@@ -1,9 +1,11 @@
+import { Comments } from 'pages/comments'
+
+import { StyledBackground } from './styles'
+
 export const App = () => {
   return (
-    <main>
-      <div>
-
-      </div>
-    </main>
+    <StyledBackground>
+      <Comments/>
+    </StyledBackground>
   )
 }
