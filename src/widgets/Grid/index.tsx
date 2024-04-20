@@ -1,13 +1,13 @@
-import type { CSSProperties } from 'react'
-import styled from 'styled-components'
+import styled from "styled-components";
+import type { CSSProperties } from "react";
 
 interface GridProps {
-  columns?: string
-  rows?: string
-  justify?: CSSProperties['justifyContent']
-  align?: CSSProperties['alignItems']
-  border?: string
-  gap?: string
+  columns?: string;
+  rows?: string;
+  justify?: CSSProperties["justifyContent"];
+  align?: CSSProperties["alignItems"];
+  border?: string;
+  gap?: string;
 }
 
 export const Grid = styled.div<GridProps>`
@@ -18,4 +18,4 @@ export const Grid = styled.div<GridProps>`
   align-items: ${({ align }) => align};
   justify-content: ${({ align }) => align};
   gap: ${({ gap }) => gap};
-`
+`;
