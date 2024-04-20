@@ -13,6 +13,7 @@ import { dateConstants } from "../../constants/date";
 import type { UsePatchCommentTypes } from "../../pages/comments/api/usePatchComment";
 
 import { StyledContainer } from "./styles";
+import { isNil } from "lodash";
 import { useIsDesktop } from "../../responsive";
 
 export namespace CommentTypes {
@@ -24,6 +25,7 @@ export namespace CommentTypes {
 
 export const Comment: React.FC<CommentTypes.Props> = React.memo(function Comment(props) {
   const isDesktop = useIsDesktop();
+
   const formattedCreatedDate = useMemo(() => {
     const date = new Date(props.comment.created);
     const today = new Date();
@@ -40,17 +42,25 @@ export const Comment: React.FC<CommentTypes.Props> = React.memo(function Comment
     return format(date, dateConstants.fullDate);
   }, [props.comment.created]);
 
+  const avatarSize = useMemo(() => {
+    return isDesktop ? 68 : 40;
+  }, [isDesktop]);
+
+  if (isNil(props.comment.author)) {
+    return null;
+  }
+
   return (
-    <Grid columns={`${isDesktop ? 68 : 40}px 1fr`} gap={"20px"}>
+    <Grid columns={`${avatarSize}px 1fr`} gap={"20px"}>
       <Avatar
-        avatar={props.comment.author?.avatar}
-        size={isDesktop ? 68 : 40}
-        label={props.comment.author?.name}
+        avatar={props.comment.author.avatar}
+        size={avatarSize}
+        label={props.comment.author.name}
       />
       <Flex direction={"column"} gap={"12.5px"}>
         <Grid columns={"1fr auto"} gap={"12px"}>
           <Flex direction={"column"} gap={"4px"}>
-            <Text variant={"bold"}>{props.comment.author?.name}</Text>
+            <Text variant={"bold"}>{props.comment.author.name}</Text>
             <SubText>{formattedCreatedDate}</SubText>
           </Flex>
           <StyledContainer

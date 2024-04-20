@@ -12,12 +12,12 @@ export namespace TextTypes {
   }
 }
 export const Text = React.forwardRef<HTMLDivElement, TextTypes.Props>(function Text(
-  { children, variant, ...props },
+  { children, variant, isLoading, ...props },
   ref,
 ) {
   return (
     <StyledContainer ref={ref} $variant={variant} {...props}>
-      {props.isLoading ? (
+      {isLoading ? (
         <RotatingLines
           width="12"
           strokeWidth="5"

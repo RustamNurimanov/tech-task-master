@@ -7,11 +7,10 @@ import { usePatchComment } from "./api/usePatchComment";
 
 export namespace UseModelTypes {
   export type CommentWithAuthor = Omit<UseCommentsListTypes.Entity, "author"> & {
-    author: useAuthorListTypes.Entity;
+    author: useAuthorListTypes.Entity | null;
   };
   export type CommentEntity = CommentWithAuthor & {
     subComments: CommentEntity[];
-    isLiked: boolean;
   };
 }
 
@@ -27,66 +26,66 @@ export const useModel = () => {
   const { data: authors, isLoading: isAuthorsLoading } = useAuthorList();
   const { onPatchComment } = usePatchComment(commentsQueryKey);
 
-  //FIXME каунтреты отдельно с бека должны запрашиваться
-  const totalLikesCount = useMemo(() => {
-    return comments.reduce((acc, comment) => acc + comment.likes, 0);
-  }, [comments]);
-
-  const totalCommentsCount = useMemo(() => {
-    return comments.length;
-  }, [comments]);
-
   //FIXME мы не должны джоинить автора и сабкоменты на фронте это логика бека
   const authorById = useMemo(() => {
     return new Map(authors?.map(author => [author.id, author]));
   }, [authors]);
 
   const commentsWithAuthor = useMemo<UseModelTypes.CommentWithAuthor[]>(() => {
-    return comments.map(comment => ({ ...comment, author: authorById.get(comment.author)! }));
+    return comments.map(comment => ({
+      ...comment,
+      author: authorById.get(comment.author) ?? null,
+    }));
   }, [comments, authorById]);
 
-  const commentsByParentId = useMemo(() => {
-    return commentsWithAuthor.reduce<Record<string, UseModelTypes.CommentWithAuthor[]>>(
-      (acc, comment) => {
-        if (isNil(comment.parent)) return acc;
-
-        if (comment.parent in acc) {
-          const comments = acc[comment.parent];
-          acc[String(comment.parent)] = [...comments, comment];
-        } else {
-          acc[String(comment.parent)] = [comment];
-        }
+  const joinedComments = useMemo<UseModelTypes.CommentEntity[]>(() => {
+    const commentsByParentId = commentsWithAuthor.reduce<
+      Record<string, UseModelTypes.CommentEntity[]>
+    >((acc, comment) => {
+      if (isNil(comment.parent)) {
         return acc;
-      },
-      {},
-    );
-  }, [commentsWithAuthor]);
+      }
+      const commentWithSubComments = {
+        ...comment,
+        subComments: [],
+      } satisfies UseModelTypes.CommentEntity;
 
-  //FIXME сортировка на беке должна происходить
-  const sortedComments = useMemo<UseModelTypes.CommentEntity[]>(() => {
+      if (comment.parent in acc) {
+        const comments = acc[comment.parent];
+        acc[comment.parent] = [...comments, commentWithSubComments];
+        return acc;
+      }
+
+      acc[comment.parent] = [commentWithSubComments];
+      return acc;
+    }, {});
+
+    //FIXME сортировка на беке должна происходить
     return orderBy(
       commentsWithAuthor.filter(comment => isNil(comment.parent)),
       "created",
       "desc",
-    ).map<UseModelTypes.CommentEntity>(comment => {
-      if (comment.id in commentsByParentId) {
-        const subComments = orderBy(commentsByParentId[comment.id], "created", "desc");
-        return {
-          ...comment,
-          subComments: subComments.map(comment => ({ ...comment, subComments: [] })),
-        };
-      }
-      return { ...comment, subComments: [] };
-    });
-  }, [commentsByParentId, commentsWithAuthor]);
+    ).map(comment => ({
+      ...comment,
+      subComments: orderBy(commentsByParentId[comment.id] ?? [], "created", "desc"),
+      //FIXME этих данных даже в модели нет!!
+      isLiked: comment.isLiked ?? false,
+    }));
+  }, [commentsWithAuthor]);
+
+  //FIXME каунтреты нельзя считать на фронте нужно ручки на беке и уже локально обновлять кеш на мутациях
+  const totalLikesCount = useMemo(
+    () => comments.reduce((acc, comment) => acc + comment.likes, 0),
+    [comments],
+  );
+  const totalCommentsCount = useMemo(() => comments.length, [comments]);
 
   return {
     onPatchComment,
     totalLikesCount,
     totalCommentsCount,
-    comments: sortedComments,
+    comments: joinedComments,
     authors,
-
     commentsFetchNextPage,
     commentsHasNextPage,
     isLoading: isCommentsLoading || isAuthorsLoading,

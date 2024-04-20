@@ -13,7 +13,7 @@ export namespace UseCommentsListTypes {
     author: number;
     parent: null | number;
     likes: number;
-    isLiked: boolean;
+    isLiked?: boolean;
   }
   export type RawQueryData = InfiniteData<
     GlobalTypes.PaginationResponse<UseCommentsListTypes.Entity>
