@@ -1,3 +1,4 @@
+import Media from "../../responsive/Media";
 import styled from "styled-components";
 
 export const StyledHeader = styled.div`
@@ -7,12 +8,15 @@ export const StyledHeader = styled.div`
   justify-content: space-between;
   align-items: center;
   width: 100%;
+  margin-bottom: 32px;
+  ${Media.mobile} {
+    margin-bottom: 24px;
+  }
 `;
 
 export const StyledContainer = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 32px;
   max-width: 562px;
   width: 100%;
   padding: 52px 0 64px;

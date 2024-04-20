@@ -10,6 +10,7 @@ import styled from "styled-components";
 
 import { CommentsList } from "components/CommentsList";
 
+import { Media } from "../../responsive";
 import { StyledContainer, StyledHeader } from "./styles";
 import { useModel } from "./model";
 
@@ -50,4 +51,7 @@ export const Comments = () => {
 };
 const StyledButton = styled(Button)`
   margin: 60px auto 0;
+  ${Media.mobile} {
+    margin-top: 40px;
+  }
 `;
