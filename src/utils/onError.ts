@@ -12,7 +12,9 @@ export namespace ErrorTypes {
 export const onError = (error: Error) => {
   if (axios.isAxiosError(error)) {
     if (error.message === ErrorTypes.ErrorTypesEnum.NetworkError) {
-      toast.error("Произошла ошибка из за отсутствия подключения к интернету");
+      toast.error(
+        "Произошла ошибка сети. Пожалуйста, проверьте ваше интернет-соединение и попробуйте снова.",
+      );
     }
     return;
   }
