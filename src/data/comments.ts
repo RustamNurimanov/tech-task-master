@@ -20,7 +20,6 @@ const commentsPage1: IPagination<unknown[]> = {
   data: [
     {
       id: 1,
-      // eslint-disable-next-line no-undef
       created: subtractHours(today, 1).toISOString(),
       text: "The Force will be with you. Always.",
       author: 1,
@@ -142,7 +141,6 @@ const commentsPage1: IPagination<unknown[]> = {
     },
   ],
 };
-
 const commentsPage2: IPagination<unknown[]> = {
   pagination: {
     page: 2,

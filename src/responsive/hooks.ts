@@ -6,5 +6,5 @@ export const useIsDesktop = () => {
 };
 
 export const useIsMobile = () => {
-  return useMediaQuery({ maxWidth: parseInt(BREAKPOINTS.sm, 10) - 1 });
+  return useMediaQuery({ maxWidth: parseInt(BREAKPOINTS.lg, 10) - 1 });
 };

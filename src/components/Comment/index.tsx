@@ -35,7 +35,7 @@ export const Comment: React.FC<CommentTypes.Props> = React.memo(function Comment
           end: new Date(),
           start: new Date(props.comment.created),
         }),
-        { locale: ru },
+        { locale: ru, format: ["hours"] },
       );
       return `${duration} назад`;
     }

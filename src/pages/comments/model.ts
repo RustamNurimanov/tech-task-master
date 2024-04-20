@@ -27,17 +27,15 @@ export const useModel = () => {
   const { onPatchComment } = usePatchComment(commentsQueryKey);
 
   //FIXME мы не должны джоинить автора и сабкоменты на фронте это логика бека
-  const authorById = useMemo(() => {
-    return new Map(authors?.map(author => [author.id, author]));
-  }, [authors]);
-
   const commentsWithAuthor = useMemo<UseModelTypes.CommentWithAuthor[]>(() => {
+    const authorMap = new Map(authors?.map(author => [author.id, author]));
     return comments.map(comment => ({
       ...comment,
-      author: authorById.get(comment.author) ?? null,
+      author: authorMap.get(comment.author) ?? null,
     }));
-  }, [comments, authorById]);
+  }, [comments, authors]);
 
+  //FIXME Вся логика мапинга должна быть на беке =)
   const joinedComments = useMemo<UseModelTypes.CommentEntity[]>(() => {
     const commentsByParentId = commentsWithAuthor.reduce<
       Record<string, UseModelTypes.CommentEntity[]>
@@ -60,17 +58,19 @@ export const useModel = () => {
       return acc;
     }, {});
 
+    const mapper = (comment: UseModelTypes.CommentWithAuthor): UseModelTypes.CommentEntity => ({
+      ...comment,
+      subComments: orderBy(commentsByParentId[comment.id]?.map(mapper) ?? [], "created", "desc"),
+      //FIXME этих данных даже в модели нет!!
+      isLiked: comment.isLiked ?? false,
+    });
+
     //FIXME сортировка на беке должна происходить
     return orderBy(
       commentsWithAuthor.filter(comment => isNil(comment.parent)),
       "created",
       "desc",
-    ).map(comment => ({
-      ...comment,
-      subComments: orderBy(commentsByParentId[comment.id] ?? [], "created", "desc"),
-      //FIXME этих данных даже в модели нет!!
-      isLiked: comment.isLiked ?? false,
-    }));
+    ).map(mapper);
   }, [commentsWithAuthor]);
 
   //FIXME каунтреты нельзя считать на фронте нужно ручки на беке и уже локально обновлять кеш на мутациях
