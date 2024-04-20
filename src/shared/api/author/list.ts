@@ -1,18 +1,19 @@
-import getCommentsRequest from '../../../api/comments/getCommentsRequest'
-import { useLoadItems } from '../../../hooks/useLoadItems'
+import { useQuery } from "@tanstack/react-query";
+
+import getAuthorsRequest from "../../../api/authors/getAuthorsRequest";
 
 export namespace useAuthorListTypes {
   //Подобные модели должны браться из код гена, а не создаваться руками)
   export interface Entity {
-    id: number
-    name: string
-    avatar: string | null
+    id: number;
+    name: string;
+    avatar: string | null;
   }
 }
 
 export const useAuthorList = () => {
-  return useLoadItems({
-    fetchFn: getCommentsRequest,
-    queryKey: ['comments']
-  })
-}
+  return useQuery({
+    queryKey: ["authors"],
+    queryFn: getAuthorsRequest,
+  });
+};
