@@ -20,5 +20,5 @@ export const StyledContainer = styled.div`
   max-width: 562px;
   width: 100%;
   padding: 52px 0 64px;
-  margin: 0 20px;
+  margin: 0 24px;
 `;
