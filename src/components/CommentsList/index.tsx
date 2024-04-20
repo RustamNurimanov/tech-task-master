@@ -1,18 +1,28 @@
-import React from 'react'
+import { isEmpty } from "lodash";
+import React from "react";
 
-import { type UseCommentsListTypes } from '../../shared/api/comments/list'
-import { Flex } from '../../widgets/Flex'
-import { Comment } from '../Comment'
+import { Comment, type CommentTypes } from "../Comment";
+import { Flex } from "../../widgets/Flex";
+import { type UseModelTypes } from "../../pages/comments/model";
 
-interface Props {
-  comments?: UseCommentsListTypes.Entity[]
-}
-export const CommentsList: React.FC<Props> = (props) => {
+type Props = {
+  comments?: UseModelTypes.CommentEntity[];
+} & Pick<CommentTypes.Props, "onLikeClick">;
+
+//Если была бы большая вложенность, то надо бы выносить в контекст
+export const CommentsList: React.FC<Props> = React.memo(function CommentsList(props) {
   return (
-    <Flex direction={'column'} gap={'32px'}>
-      {props.comments?.map((comment) => (
-        <Comment comment={comment} key={comment.id}/>
+    <Flex direction={"column"} gap={"32px"}>
+      {props.comments?.map(comment => (
+        <Flex direction={"column"} gap={"32px"} key={comment.id}>
+          <Comment comment={comment} onLikeClick={props.onLikeClick} />
+          {!isEmpty(comment.subComments) && (
+            <div style={{ marginLeft: 34 }}>
+              <CommentsList comments={comment.subComments} onLikeClick={props.onLikeClick} />
+            </div>
+          )}
+        </Flex>
       ))}
     </Flex>
-  )
-}
+  );
+});
