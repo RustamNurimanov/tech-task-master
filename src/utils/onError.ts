@@ -1,9 +1,11 @@
+import { errors } from "../constants/errors";
 import axios from "axios";
 import toast from "react-hot-toast";
 
 export namespace ErrorTypes {
   export enum ErrorTypesEnum {
     NetworkError = "Network Error",
+    Unknown = "Unknown",
   }
 }
 
@@ -12,9 +14,9 @@ export namespace ErrorTypes {
 export const onError = (error: Error) => {
   if (axios.isAxiosError(error)) {
     if (error.message === ErrorTypes.ErrorTypesEnum.NetworkError) {
-      toast.error("Произошла ошибка из за отсутствия подключения к интернету");
+      toast.error(errors[ErrorTypes.ErrorTypesEnum.NetworkError]);
     }
     return;
   }
-  toast.error("Произошла неизвестная ошибка");
+  toast.error(errors[ErrorTypes.ErrorTypesEnum.Unknown]);
 };
