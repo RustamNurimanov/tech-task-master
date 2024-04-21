@@ -3,7 +3,7 @@ import {
   type UsePatchCommentTypes as UsePatchCommentMutationTypes,
   usePatchComment as usePatchCommentMutation,
 } from "shared/api/comments/patchComment";
-import { isNil } from "lodash";
+import { flatten, isNil } from "lodash";
 import { produce } from "immer";
 import { useCallback } from "react";
 import { useQueryClient } from "@tanstack/react-query";
@@ -28,10 +28,7 @@ export const usePatchComment = (queryKey: unknown[]) => {
           if (isNil(draft)) {
             return draft;
           }
-          const flatComments = draft?.pages.reduce<UseCommentsListTypes.Entity[]>(
-            (acc, item) => [...acc, ...item.data],
-            [],
-          );
+          const flatComments = flatten(draft?.pages.map(item => item.data));
           const comment = flatComments.find(comment => comment.id === id);
 
           if (isNil(comment)) {
@@ -39,7 +36,7 @@ export const usePatchComment = (queryKey: unknown[]) => {
           }
 
           if (!isNil(isLiked)) {
-            comment.isLiked = isLiked ?? comment.isLiked;
+            comment.isLiked = isLiked;
 
             if (isLiked) {
               comment.likes += 1;

@@ -4,6 +4,7 @@ import useInfiniteScroll from "react-infinite-scroll-hook";
 import type { IntersectionObserverHookRefCallback } from "react-intersection-observer-hook";
 
 import { type GlobalTypes } from "../types/global";
+import { flatten } from "lodash";
 
 export namespace UseLoadItemsTypes {
   export interface LoadItemsProps<T> {
@@ -45,10 +46,7 @@ export const useLoadItems = <T>({
     onLoadMore: fetchNextPage,
   });
 
-  const flatData = useMemo(
-    () => data?.pages?.reduce<T[]>((acc, item) => [...acc, ...item.data], []),
-    [data],
-  );
+  const flatData = useMemo(() => flatten(data?.pages.map(item => item.data)), [data]);
 
   return {
     data: flatData ?? [],
