@@ -1,5 +1,5 @@
 import { type UseCommentsListTypes, useCommentsList } from "shared/api/comments/list";
-import { isNil, orderBy } from "lodash";
+import { isNil } from "lodash";
 import { useAuthorList, type useAuthorListTypes } from "shared/api/author/list";
 import { useMemo } from "react";
 
@@ -60,17 +60,15 @@ export const useModel = () => {
 
     const mapper = (comment: UseModelTypes.CommentWithAuthor): UseModelTypes.CommentEntity => ({
       ...comment,
-      subComments: orderBy(commentsByParentId[comment.id]?.map(mapper) ?? [], "created", "desc"),
+      //Сорт от новым к старым
+      // subComments: orderBy(commentsByParentId[comment.id]?.map(mapper) ?? [], "created", "desc"),
+      subComments: commentsByParentId[comment.id]?.map(mapper) ?? [],
       //FIXME этих данных даже в модели нет!!
       isLiked: comment.isLiked ?? false,
     });
 
     //FIXME сортировка на беке должна происходить
-    return orderBy(
-      commentsWithAuthor.filter(comment => isNil(comment.parent)),
-      "created",
-      "desc",
-    ).map(mapper);
+    return commentsWithAuthor.filter(comment => isNil(comment.parent)).map(mapper);
   }, [commentsWithAuthor]);
 
   //FIXME каунтреты нельзя считать на фронте нужно ручки на беке и уже локально обновлять кеш на мутациях
